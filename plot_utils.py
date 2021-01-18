@@ -14,8 +14,10 @@ from .np_utils import vectorize_tensor
 def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png'  ):
 	# Create directory to store figure if it does not exist
 	os.makedirs(dirpath, exist_ok=True)
-	# Full flepath
-	filepath = '{}/{}.{}'.format(dirpath, filename, file_ext)
+	# If filename contains file extension then ignore the input file ext
+	# Else add the input file etension
+	if('.' in  filename): filepath = os.path.join(dirpath, filename)
+	else: filepath = os.path.join(dirpath, filename) + '.{}'.format(file_ext)
 	plt.savefig(filepath, 
 				dpi=None, 
 				# facecolor='w', 
