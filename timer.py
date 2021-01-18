@@ -11,9 +11,7 @@ class Timer(object):
 	def __enter__(self):
 		self.tstart = time.time()
 	def __exit__(self, type, value, traceback):
-		if self.name:
-			print('[{}] - Elapsed: {} seconds.'.format(self.name, time.time() - self.tstart))
-		else:
-			print('Elapsed: {}'.format(time.time() - self.tstart))
+		if self.name: print('[{}] - Elapsed: {} seconds.'.format(self.name, time.time() - self.tstart))
+		else: print('Elapsed: {}'.format(time.time() - self.tstart))
 
 
