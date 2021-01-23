@@ -36,8 +36,8 @@ def circular_corr( v1, v2, axis=-1 ):
 
 
 def get_smoothing_window(N=100,window_len=11,window='flat'):
-	"""smooth the data using a window with requested size.
- 
+	"""
+        smooth the data using a window with requested size.
 	"""
 	## Validate Inputs
 	if(N < window_len):
