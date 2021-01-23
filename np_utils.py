@@ -7,7 +7,6 @@ breakpoint = debugger.set_trace
 
 #### Local imports
 
-
 def vectorize_tensor(tensor, axis=-1):
 	'''
 		Take an N-Dim Tensor and make it a 2D matrix. Leave the first or last dimension untouched, and basically squeeze the 1st-N-1
