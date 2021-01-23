@@ -14,4 +14,3 @@ class Timer(object):
 		if self.name: print('[{}] - Elapsed: {} seconds.'.format(self.name, time.time() - self.tstart))
 		else: print('Elapsed: {}'.format(time.time() - self.tstart))
 
-
