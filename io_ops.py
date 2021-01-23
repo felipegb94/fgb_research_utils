@@ -3,8 +3,6 @@ import os
 import json
 
 #### Library imports
-from IPython.core import debugger
-breakpoint = debugger.set_trace
 
 #### Local imports
 
