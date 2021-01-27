@@ -31,9 +31,9 @@ def unvectorize_tensor(tensor, tensor_shape):
 
 def to_nparray( a ):
 	'''
-        cast to np array. If a is scalar, make it a 1D 1 element vector
-    '''
-    a_arr = np.array(a)
+		cast to np array. If a is scalar, make it a 1D 1 element vector
+	'''
+	a_arr = np.array(a)
 	# if it was a scalar add dimension
 	if(a_arr.ndim == 0): return a_arr[np.newaxis]
 	# otherwise simply return the new nparray
