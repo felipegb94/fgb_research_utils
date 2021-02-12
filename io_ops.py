@@ -2,6 +2,7 @@
 import os
 import json
 import re
+import pickle
 
 #### Library imports
 
@@ -17,6 +18,14 @@ def write_json( json_filepath, input_dict ):
 	assert(isinstance(input_dict, dict)), "write_json only works if the input_dict is of type dict"
 	with open(json_filepath, 'w') as output_file: 
 		json.dump(input_dict, output_file, indent=4)
+
+def save_object(obj, filepath):
+	with open(filepath, 'wb') as output:  # Overwrites any existing file.
+		pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
+
+def load_object(filepath): 
+	with open(filepath, 'rb') as input_pickle_file:
+		return pickle.load(input_pickle_file)
 
 def simple_grep( filepath, str_to_search, n_lines=1 ):
 	'''
