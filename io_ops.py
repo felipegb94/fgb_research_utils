@@ -43,3 +43,19 @@ def simple_grep( filepath, str_to_search, n_lines=1 ):
 			n_lines_found += 1
 			lines_with_str.append(line.split('\n')[0]) # Remove the new line characted if there is any
 	return lines_with_str
+
+def get_dirnames_in_dir(dirpath, str_in_dirname=None):
+	'''
+		Output all the dirnames inside of dirpath.
+		If str_in_dirname is given, only return the dirnames containing that string
+	'''
+	assert(os.path.exists(dirpath)), "Input dirpath does not exist"
+	all_dirnames = next(os.walk(dirpath))[1]
+	# If no string pattern is given return all dirnames
+	if(str_in_dirname is None): return all_dirnames
+	filtered_dirnames = []
+	for curr_dirname in all_dirnames:
+		if(str_in_dirname in curr_dirname):
+			filtered_dirnames.append(curr_dirname)
+	return filtered_dirnames
+		
