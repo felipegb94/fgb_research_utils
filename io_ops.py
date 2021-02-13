@@ -27,18 +27,20 @@ def load_object(filepath):
 	with open(filepath, 'rb') as input_pickle_file:
 		return pickle.load(input_pickle_file)
 
-def simple_grep( filepath, str_to_search, n_lines=1 ):
+def simple_grep( filepath, str_to_search, n_lines=-1 ):
 	'''
 		Search text file and return the first n_lines containing that string
 		If the line contains the string multiple times, it is only counted as a single line 
 	'''
 	assert(os.path.exists(filepath)), "{} does not exist".format(filepath)
-	assert(n_lines >= 0), "n_lines needs to be a non-negative integer".format(filepath)
+	assert(n_lines >= -1), "n_lines needs to be -1 OR a non-negative integer. If it is -1 then we return all lines".format(filepath)
 	f = open(filepath, "r")
 	lines_with_str = []
 	n_lines_found = 0
 	for line in f:
-		if(n_lines_found == n_lines): return lines_with_str
+		# Return if we found all lines asked to. If n_lines ==-1 then we just continue searching for all lines
+		if((n_lines_found >= n_lines) and (n_lines >= 0)): return lines_with_str
+		# search if line contains string, and save the line if it does
 		if re.search(str_to_search, line):
 			n_lines_found += 1
 			lines_with_str.append(line.split('\n')[0]) # Remove the new line characted if there is any
@@ -58,4 +60,3 @@ def get_dirnames_in_dir(dirpath, str_in_dirname=None):
 		if(str_in_dirname in curr_dirname):
 			filtered_dirnames.append(curr_dirname)
 	return filtered_dirnames
-		
