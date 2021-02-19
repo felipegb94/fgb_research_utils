@@ -2,6 +2,7 @@
 
 ## Library Imports
 import numpy as np
+from scipy import signal
 from IPython.core import debugger
 breakpoint = debugger.set_trace
 
@@ -155,11 +156,20 @@ def circulant(f, direction = 1):
  
 	return C
 
-def sinc_interp(lres_signal, hres_n):
+def sinc_interp(lres_signal, hres_n, axis=-1):
 	'''
-		Not sure if it is completely working
+		I found out the scipy's resample does sinc interpolation so I have replaced this code with that
 	'''
-	print("WARNING: sinc_interp does not seem to be working fully correctly. Please test it more before continue using it")
+	hres_signal = signal.resample(lres_signal, hres_n, axis=axis)
+	return hres_signal
+
+def sinc_interp_old(lres_signal, hres_n):
+	'''
+		I tested the output of this code with the sinc interp function from scipy (scipy.signal.resample)
+		and the outputs matched. So this works find.
+		But, it is 3-5x slower than scipy so I replaced it with the scipy implementation
+		But I am leaving this here for future reference
+	'''
 	# Reshape transient to simplify vectorized operations
 	(lres_signal, lres_signal_original_shape) = vectorize_tensor(lres_signal)
 	n_elems = lres_signal.shape[0]

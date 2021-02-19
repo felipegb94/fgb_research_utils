@@ -3,6 +3,7 @@ import os
 
 #### Library imports
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from IPython.core import debugger
@@ -112,6 +113,13 @@ def set_legend(legend_strings, fontsize=12, loc='best', n_cols=1):
 
 def get_color_cycle(): 
 	return plt.rcParams['axes.prop_cycle'].by_key()['color']
+
+def reset_color_cycle():
+	curr_version = matplotlib.__version__.split('.')
+	if(int(curr_version[0]) <= 1):
+		if((int(curr_version[0]) == 1) and (int(curr_version[1]) > 5)): plt.gca().set_prop_cycle(None)
+		else: plt.gca().set_color_cycle(None)
+	else: plt.gca().set_prop_cycle(None)
 
 def calc_errbars(true_vals, meas_vals, axis=0):
 	'''
