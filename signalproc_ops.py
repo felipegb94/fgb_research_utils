@@ -6,6 +6,7 @@ from IPython.core import debugger
 breakpoint = debugger.set_trace
 
 ## Local Imports
+from .np_utils import vectorize_tensor
 
 # Smoothing windows that are available to band-limit a signal
 SMOOTHING_WINDOWS = ['flat', 'impulse', 'hanning', 'hamming', 'bartlett', 'blackman']  
@@ -155,17 +156,23 @@ def circulant(f, direction = 1):
 	return C
 
 def sinc_interp(lres_signal, hres_n):
+	'''
+		Not sure if it is completely working
+	'''
+	print("WARNING: sinc_interp does not seem to be working fully correctly. Please test it more before continue using it")
 	# Reshape transient to simplify vectorized operations
 	(lres_signal, lres_signal_original_shape) = vectorize_tensor(lres_signal)
 	n_elems = lres_signal.shape[0]
 	lres_n = lres_signal.shape[-1]
 	assert((hres_n % lres_n) == 0), "Current sinc_interp is only implemented for integer multiples of lres_n"
+	upscaling_factor = hres_n / lres_n
 	f_lres_signal = np.fft.rfft(lres_signal, axis=-1)
 	lres_nf = f_lres_signal.shape[-1]
 	hres_nf = (hres_n // 2) + 1
 	f_hres_signal = np.zeros((n_elems, hres_nf), dtype=f_lres_signal.dtype)
 	f_hres_signal[..., 0:lres_nf] = f_lres_signal
-	hres_signal = np.fft.irfft(f_hres_signal)
+	# NOTE: For some reason we have to multiply by the upscaling factor if we want the output signal to have the same amplitude
+	hres_signal = np.fft.irfft(f_hres_signal)*upscaling_factor
 	# Reshape final vectors
 	hres_signal_original_shape = np.array(lres_signal_original_shape)
 	hres_signal_original_shape[-1] = hres_n
