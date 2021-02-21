@@ -1,3 +1,7 @@
+'''
+	Useful function when operating on numpy arrays
+	This module should not depend on anything else other than numpy.
+'''
 #### Standard Library Imports
 
 #### Library imports
@@ -6,7 +10,6 @@ from IPython.core import debugger
 breakpoint = debugger.set_trace
 
 #### Local imports
-from .signalproc_ops import circular_conv
 
 def vectorize_tensor(tensor, axis=-1):
 	'''
@@ -61,38 +64,3 @@ def get_extended_domain(domain, axis=-1):
 	domain_right = domain+(max_val + delta)
 	return np.concatenate((domain_left, domain, domain_right), axis=axis)
 
-def normalize_signal(v, axis=-1): return v / v.sum(axis=axis, keepdims=True)
-
-def gaussian_pulse(time_domain, mu, width, circ_shifted=True):
-	'''
-		Generate K gaussian pulses with mean=mu and sigma=width.
-		If circ_shifted is set to true we create a gaussian that wraps around at the boundaries.
-	'''
-	mu_arr = to_nparray(mu)
-	width_arr = to_nparray(width)
-	assert((width_arr.size==1) or (width_arr.size==mu_arr.size)), "Input mu and width should have the same dimensions OR width should only be 1 element"
-	if(circ_shifted):
-		ext_time_domain = get_extended_domain(time_domain)
-		ext_pulse = np.exp(-1*np.square((ext_time_domain[np.newaxis,:] - mu_arr[:, np.newaxis]) / width_arr[:, np.newaxis]))
-		n_bins = time_domain.shape[-1]
-		pulse = ext_pulse[...,0:n_bins] + ext_pulse[...,n_bins:2*n_bins] + ext_pulse[...,2*n_bins:3*n_bins]
-	else:
-		pulse = np.exp(-1*np.square((time_domain[np.newaxis,:] - mu_arr[:, np.newaxis]) / width_arr[:, np.newaxis]))
-	return normalize_signal(pulse.squeeze(), axis=-1)
-
-def expgaussian_pulse_erfc(time_domain, mu, sigma, exp_lambda):
-    if(exp_lambda is None): return gaussian_pulse(time_domain, mu, sigma)
-    mu_arr = to_nparray(mu)
-    sigma_sq = np.square(sigma)
-    mu_minus_t = mu_arr[:, np.newaxis] - time_domain[np.newaxis,:]  
-    lambda_sigma_sq = exp_lambda*sigma_sq
-    erfc_input = (mu_minus_t + lambda_sigma_sq) / sigma
-    pulse = exp_lambda*np.exp(0.5*exp_lambda*(lambda_sigma_sq + 2*mu_minus_t))*scipy.special.erfc(erfc_input)
-    return normalize_signal(pulse.squeeze(), axis=-1)
-
-def expgaussian_pulse_conv(time_domain, mu, sigma, exp_lambda):
-    gauss_pulse = gaussian_pulse(time_domain, mu, sigma)
-    if(exp_lambda is None): return gauss_pulse
-    exp_decay = np.exp(-1*exp_lambda*time_domain)[np.newaxis,:]
-    expgauss_pulse = circular_conv(exp_decay, gauss_pulse, axis=-1)
-    return normalize_signal(expgauss_pulse.squeeze(), axis=-1)

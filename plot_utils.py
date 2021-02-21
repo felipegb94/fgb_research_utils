@@ -10,7 +10,6 @@ from IPython.core import debugger
 breakpoint = debugger.set_trace
 
 #### Local imports
-from .np_utils import vectorize_tensor
 
 def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png'  ):
 	# Create directory to store figure if it does not exist
