@@ -1,5 +1,6 @@
 #### Standard Library Imports
 import os
+import glob
 import json
 import re
 import pickle
@@ -60,3 +61,24 @@ def get_dirnames_in_dir(dirpath, str_in_dirname=None):
 		if(str_in_dirname in curr_dirname):
 			filtered_dirnames.append(curr_dirname)
 	return filtered_dirnames
+
+def get_filepaths_in_dir(dirpath, match_str_pattern=None, only_filenames=False):
+	'''
+		Return a list of all filepaths inside a directory that contain the match_str_pattern.
+		If we only want the filenames and not the filepath, set only_filenames=True
+	'''
+	assert(os.path.exists(dirpath)), "Input dirpath does not exist"
+	if(match_str_pattern is None): all_matching_filepaths = glob.glob(dirpath)
+	else: all_matching_filepaths = glob.glob(os.path.join(dirpath, '*' + match_str_pattern + '*'))
+	filepaths = []
+	for fpath in all_matching_filepaths:
+		if(os.path.isfile(fpath)): 
+			if(only_filenames): filepaths.append(os.path.basename(fpath))
+			else: filepaths.append(fpath)
+	return filepaths
+
+def get_string_from_file(filepath):
+	f = open(filepath)
+	path = f.read().replace('\n','')
+	f.close()
+	return path
