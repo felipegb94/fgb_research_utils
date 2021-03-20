@@ -7,7 +7,7 @@ from IPython.core import debugger
 breakpoint = debugger.set_trace
 
 ## Local Imports
-from .np_utils import vectorize_tensor
+from .np_utils import vectorize_tensor, to_nparray, get_extended_domain
 
 # Smoothing windows that are available to band-limit a signal
 SMOOTHING_WINDOWS = ['flat', 'impulse', 'hanning', 'hamming', 'bartlett', 'blackman']  
@@ -191,6 +191,7 @@ def sinc_interp_old(lres_signal, hres_n):
 	return hres_signal
 
 def normalize_signal(v, axis=-1): return v / v.sum(axis=axis, keepdims=True)
+def standardize_signal(v, axis=-1): return (v - v.min(axis=axis)) / (v.max(axis=axis) - v.min(axis=axis))
 
 def gaussian_pulse(time_domain, mu, width, circ_shifted=True):
 	'''
