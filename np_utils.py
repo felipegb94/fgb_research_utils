@@ -67,3 +67,37 @@ def get_extended_domain(domain, axis=-1):
 	domain_right = domain+(max_val + delta)
 	return np.concatenate((domain_left, domain, domain_right), axis=axis)
 
+def calc_mean_percentile_errors(errors, percentiles=[0.5, 0.75, 0.9, 1.0]):
+	'''
+		Sort the errors from lowest to hightest.
+		Given a list of percentiles calculate the mean of the sorted errors within each percentile.
+		For instance, if percentiles=[0.5,0.75,1.0], then
+		we calculate the mean of the lowest 50% errors, then the mean of the errors in the 50-75% percentile, 
+		and finally the errors in the 75-100% percentile.
+	'''
+	errors_shape = errors.shape
+	errors = errors.flatten()
+	n_elems = errors.size
+	# Sort errors
+	sorted_errors = np.sort(errors)
+	# Verify the input percentiles and find the indeces where we split the errors
+	percentiles = to_nparray(percentiles)
+	assert(not (np.any(percentiles > 1) or np.any(percentiles < 0))), "Percentiles need to be between 0 and 1"
+	percentile_indeces = np.round(n_elems*percentiles).astype(np.int)
+	# Calculate mean for each percentile
+	percentile_mean_errors = np.zeros_like(percentiles)
+	percentile_mask = np.zeros_like(errors)-1.
+	print(n_elems)
+	for i in range(percentiles.size):
+		start_idx = 0
+		if(i > 0): start_idx = percentile_indeces[i-1] 
+		end_idx = percentile_indeces[i]
+		print("Start: {}, End: {}".format(start_idx, end_idx))
+		percentile_mean_errors[i] = np.mean(sorted_errors[start_idx:end_idx])
+		# Find which pixels were used to calculate this percentile mae
+		low_error_threshold = sorted_errors[start_idx]
+		high_error_threshold = sorted_errors[end_idx-1]
+		percentile_mask[np.logical_and(errors >= low_error_threshold, errors <= high_error_threshold)] = i
+	errors = errors.reshape(errors_shape)
+	percentile_mask = percentile_mask.reshape(errors_shape)
+	return (percentile_mean_errors, percentile_mask)
