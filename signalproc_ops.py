@@ -7,7 +7,7 @@ from IPython.core import debugger
 breakpoint = debugger.set_trace
 
 ## Local Imports
-from .np_utils import vectorize_tensor, to_nparray, get_extended_domain
+from .np_utils import vectorize_tensor, to_nparray, get_extended_domain, to_nparray
 
 # Smoothing windows that are available to band-limit a signal
 SMOOTHING_WINDOWS = ['flat', 'impulse', 'hanning', 'hamming', 'bartlett', 'blackman']  
@@ -39,7 +39,7 @@ def circular_corr( v1, v2, axis=-1 ):
 
 def get_smoothing_window(N=100,window_len=11,window='flat'):
 	"""
-        smooth the data using a window with requested size.
+		smooth the data using a window with requested size.
 	"""
 	## Validate Inputs
 	if(N < window_len):
@@ -211,18 +211,44 @@ def gaussian_pulse(time_domain, mu, width, circ_shifted=True):
 	return normalize_signal(pulse.squeeze(), axis=-1)
 
 def expgaussian_pulse_erfc(time_domain, mu, sigma, exp_lambda):
-    if(exp_lambda is None): return gaussian_pulse(time_domain, mu, sigma)
-    mu_arr = to_nparray(mu)
-    sigma_sq = np.square(sigma)
-    mu_minus_t = mu_arr[:, np.newaxis] - time_domain[np.newaxis,:]  
-    lambda_sigma_sq = exp_lambda*sigma_sq
-    erfc_input = (mu_minus_t + lambda_sigma_sq) / sigma
-    pulse = exp_lambda*np.exp(0.5*exp_lambda*(lambda_sigma_sq + 2*mu_minus_t))*scipy.special.erfc(erfc_input)
-    return normalize_signal(pulse.squeeze(), axis=-1)
+	if(exp_lambda is None): return gaussian_pulse(time_domain, mu, sigma)
+	mu_arr = to_nparray(mu)
+	sigma_sq = np.square(sigma)
+	mu_minus_t = mu_arr[:, np.newaxis] - time_domain[np.newaxis,:]  
+	lambda_sigma_sq = exp_lambda*sigma_sq
+	erfc_input = (mu_minus_t + lambda_sigma_sq) / sigma
+	pulse = exp_lambda*np.exp(0.5*exp_lambda*(lambda_sigma_sq + 2*mu_minus_t))*scipy.special.erfc(erfc_input)
+	return normalize_signal(pulse.squeeze(), axis=-1)
 
 def expgaussian_pulse_conv(time_domain, mu, sigma, exp_lambda):
-    gauss_pulse = gaussian_pulse(time_domain, mu, sigma)
-    if(exp_lambda is None): return gauss_pulse
-    exp_decay = np.exp(-1*exp_lambda*time_domain)[np.newaxis,:]
-    expgauss_pulse = circular_conv(exp_decay, gauss_pulse, axis=-1)
-    return normalize_signal(expgauss_pulse.squeeze(), axis=-1)
+	gauss_pulse = gaussian_pulse(time_domain, mu, sigma)
+	if(exp_lambda is None): return gauss_pulse
+	exp_lambda = to_nparray(exp_lambda)
+	exp_decay = np.exp(-1*exp_lambda[:, np.newaxis]*time_domain[np.newaxis,:])
+	expgauss_pulse = circular_conv(exp_decay, gauss_pulse, axis=-1)
+	return normalize_signal(expgauss_pulse.squeeze(), axis=-1)
+
+def verify_time_domain(time_domain=None, n=1000):
+	if(not (time_domain is None)):
+		time_domain = to_nparray(time_domain)
+		n = time_domain.shape[-1]
+	else:
+		time_domain = np.arange(0, n)
+	assert(n > 1), "Number of time bins in time domain needs to be larger than 1 (n = {})".format(n)
+	dt = time_domain[1] - time_domain[0]
+	tau = time_domain[-1] + dt
+	return (time_domain, n, tau, dt)
+
+def get_random_gaussian_pulse_params(time_domain=None, n=1000, min_max_sigma=None, n_samples=1):
+	(time_domain, n, tau, dt) = verify_time_domain(time_domain, n)
+	mu = tau*np.random.rand(n_samples)
+	if(min_max_sigma is None): min_max_sigma = (1, 10)
+	sigma = dt*np.random.randint(low=min_max_sigma[0], high=min_max_sigma[1], size=(n_samples,))
+	return (mu, sigma)
+
+def get_random_expgaussian_pulse_params(time_domain=None, n=1000, min_max_sigma=None, min_max_lambda=None, n_samples=1):
+	(time_domain, n, tau, dt) = verify_time_domain(time_domain, n)
+	(mu, sigma) = get_random_gaussian_pulse_params(time_domain=time_domain, n=n, min_max_sigma=min_max_sigma, n_samples=n_samples)
+	if(min_max_lambda is None): min_max_lambda = (1, 50)
+	exp_lambda = 1. / (dt*np.random.randint(low=min_max_lambda[0], high=min_max_lambda[1], size=(n_samples,)))
+	return (mu, sigma, exp_lambda)
