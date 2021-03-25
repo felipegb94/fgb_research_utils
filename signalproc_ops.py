@@ -191,7 +191,7 @@ def sinc_interp_old(lres_signal, hres_n):
 	return hres_signal
 
 def normalize_signal(v, axis=-1): return v / v.sum(axis=axis, keepdims=True)
-def standardize_signal(v, axis=-1): return (v - v.min(axis=axis)) / (v.max(axis=axis) - v.min(axis=axis))
+def standardize_signal(v, axis=-1): return (v - v.min(axis=axis, keepdims=True)) / (v.max(axis=axis, keepdims=True) - v.min(axis=axis, keepdims=True))
 
 def gaussian_pulse(time_domain, mu, width, circ_shifted=True):
 	'''
