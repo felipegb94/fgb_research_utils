@@ -101,3 +101,11 @@ def calc_mean_percentile_errors(errors, percentiles=[0.5, 0.75, 0.9, 1.0]):
 	errors = errors.reshape(errors_shape)
 	percentile_mask = percentile_mask.reshape(errors_shape)
 	return (percentile_mean_errors, percentile_mask)
+
+def domain2index(val, max_domain_val, n):
+	'''
+		Assumes domain is between 0 and max_domain_val
+	'''
+	delta = max_domain_val / n
+	return np.round(val / delta).astype(np.int32)
+
