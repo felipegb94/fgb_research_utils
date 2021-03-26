@@ -8,6 +8,7 @@ breakpoint = debugger.set_trace
 
 ## Local Imports
 from .np_utils import vectorize_tensor, to_nparray, get_extended_domain, to_nparray
+from .shared_constants import *
 
 # Smoothing windows that are available to band-limit a signal
 SMOOTHING_WINDOWS = ['flat', 'impulse', 'hanning', 'hamming', 'bartlett', 'blackman']  
@@ -190,8 +191,8 @@ def sinc_interp_old(lres_signal, hres_n):
 	lres_signal = lres_signal.reshape(lres_signal_original_shape)
 	return hres_signal
 
-def normalize_signal(v, axis=-1): return v / v.sum(axis=axis, keepdims=True)
-def standardize_signal(v, axis=-1): return (v - v.min(axis=axis, keepdims=True)) / (v.max(axis=axis, keepdims=True) - v.min(axis=axis, keepdims=True))
+def normalize_signal(v, axis=-1): return v / (v.sum(axis=axis, keepdims=True) + EPSILON)
+def standardize_signal(v, axis=-1): return (v - v.min(axis=axis, keepdims=True)) / (v.max(axis=axis, keepdims=True) - v.min(axis=axis, keepdims=True) + EPSILON)
 
 def gaussian_pulse(time_domain, mu, width, circ_shifted=True):
 	'''
@@ -252,3 +253,38 @@ def get_random_expgaussian_pulse_params(time_domain=None, n=1000, min_max_sigma=
 	if(min_max_lambda is None): min_max_lambda = (1, 50)
 	exp_lambda = 1. / (dt*np.random.randint(low=min_max_lambda[0], high=min_max_lambda[1], size=(n_samples,)))
 	return (mu, sigma, exp_lambda)
+
+def get_fourier_mat(n, freq_idx=None):
+	'''
+		n is the number of samples in the primary domain
+		freq_idx are the frequencies you want to get
+
+		Return an nxk matrix where each column is a cmpx sinusoid with
+	'''
+	# If no frequency indeces are given simply return the full dft matrix
+	if(freq_idx is None):
+		return scipy.linalg.dft(n).transpose()
+	# For each frequency idx add them to their corresponding cmpx sinusoid to the matrix
+	n_freqs = len(freq_idx)
+	domain = np.arange(0, n)*(TWOPI / n)
+	fourier_mat = np.zeros((n, n_freqs), dtype=np.complex64)
+	for i in range(n_freqs):
+		fourier_mat[:, i] = np.cos(freq_idx[i]*domain) + 1j*np.sin(freq_idx[i]*domain)
+	return fourier_mat
+
+def broadcast_toeplitz( C_tensor, R_tensor=None):
+	'''
+		Create a toeplitz matrix using the last dimension of the input tensor
+	'''
+	if R_tensor is None:
+		R_tensor = C_tensor.conjugate()
+	else:
+		R_tensor = np.asarray(R_tensor)
+	# Form a 1D array of values to be used in the matrix, containing a reversed
+	# copy of r[1:], followed by c.
+	vals_tensor = np.concatenate((R_tensor[...,-1:0:-1], C_tensor), axis=-1)
+	a, b = np.ogrid[0:C_tensor.shape[-1], R_tensor.shape[-1] - 1:-1:-1]
+	indx = a + b
+	# `indx` is a 2D array of indices into the 1D array `vals`, arranged so
+	# that `vals[indx]` is the Toeplitz matrix.
+	return vals_tensor[..., indx]
