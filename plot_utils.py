@@ -46,18 +46,31 @@ def plot_and_save_rgb(data, out_dirpath='./', out_filename='out_img', min_val=No
 	(fig, ax) = plt.subplots()
 	img = ax.imshow(data, vmin=min_val, vmax=max_val)
 	if(rm_ticks): remove_ticks()
-	if(add_colorbar): 
-		divider = make_axes_locatable(ax)
-		if(cbar_orientation == 'vertical'): 
-			cax = divider.append_axes('right', size='4%', pad=0.05)
-			# cax = divider.append_axes('right', size='10%', pad=0.05)
-		else: cax = divider.append_axes('bottom', size='10%', pad=0.05)
-		fig.colorbar(img, cax=cax, orientation=cbar_orientation)
+	if(add_colorbar):
+		set_cbar(cbar_orientation) 
+		# divider = make_axes_locatable(ax)
+		# if(cbar_orientation == 'vertical'): 
+		# 	cax = divider.append_axes('right', size='4%', pad=0.05)
+		# 	# cax = divider.append_axes('right', size='10%', pad=0.05)
+		# else: cax = divider.append_axes('bottom', size='10%', pad=0.05)
+		# fig.colorbar(img, cax=cax, orientation=cbar_orientation)
 	if(add_title): plt.title(out_filename)
 	if(save_fig): 	
 		save_rgb(out_dirpath, out_filename, file_ext=file_ext, rm_ticks=False)
 		if(use_imsave):
 			plt.imsave(out_dirpath+'/image_'+out_filename+'.'+file_ext, data, vmin=min_val, vmax=max_val)
+
+def set_cbar(img, cbar_orientation='vertical'):
+	fig = plt.gcf()
+	ax = plt.gca()
+	divider = make_axes_locatable(ax)
+	if(cbar_orientation == 'vertical'): 
+		cax = divider.append_axes('right', size='4%', pad=0.05)
+		# cax = divider.append_axes('right', size='10%', pad=0.05)
+	else: cax = divider.append_axes('bottom', size='10%', pad=0.05)
+	fig.colorbar(img, cax=cax, orientation=cbar_orientation)
+	plt.sca(ax) # Set axis back to what it was
+	# fig.colorbar(img, orientation=cbar_orientation, ax=ax)
 
 def draw_histogram(x, height, draw_line=True):
 	curr_ax = plt.gca()
