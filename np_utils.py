@@ -87,12 +87,10 @@ def calc_mean_percentile_errors(errors, percentiles=[0.5, 0.75, 0.9, 1.0]):
 	# Calculate mean for each percentile
 	percentile_mean_errors = np.zeros_like(percentiles)
 	percentile_mask = np.zeros_like(errors)-1.
-	print(n_elems)
 	for i in range(percentiles.size):
 		start_idx = 0
 		if(i > 0): start_idx = percentile_indeces[i-1] 
 		end_idx = percentile_indeces[i]
-		print("Start: {}, End: {}".format(start_idx, end_idx))
 		percentile_mean_errors[i] = np.mean(sorted_errors[start_idx:end_idx])
 		# Find which pixels were used to calculate this percentile mae
 		low_error_threshold = sorted_errors[start_idx]

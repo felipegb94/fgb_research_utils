@@ -11,7 +11,7 @@ breakpoint = debugger.set_trace
 
 #### Local imports
 
-def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png'  ):
+def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_imsave=False  ):
 	# Create directory to store figure if it does not exist
 	os.makedirs(dirpath, exist_ok=True)
 	# If filename contains file extension then ignore the input file ext
@@ -30,6 +30,7 @@ def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png'  ):
 				# metadata=None 
 				format=file_ext
 				)
+	
 
 def save_currfig_png( dirpath = '.', filename = 'curr_fig'  ): 
 	save_currfig( dirpath = dirpath, filename = filename, file_ext = 'png' )
@@ -37,6 +38,10 @@ def save_currfig_png( dirpath = '.', filename = 'curr_fig'  ):
 def save_rgb( dirpath = '.', filename = 'curr_rgb', file_ext='svg', rm_ticks=True):
 	if(rm_ticks): remove_ticks()
 	save_currfig(dirpath = dirpath, filename = filename, file_ext=file_ext)
+
+def save_img(data, out_dirpath, out_filename, min_val=0, max_val=None, file_ext='png'):
+	if(max_val is None): max_val = data.mean() + 3*data.std()
+	plt.imsave(out_dirpath+'/image_'+out_filename+'.'+file_ext, data, vmin=min_val, vmax=max_val)
 
 def plot_and_save_rgb(data, out_dirpath='./', out_filename='out_img', min_val=None, max_val=None, add_colorbar=False, rm_ticks=True, cbar_orientation='vertical', file_ext='png', save_fig=False, add_title=False, use_imsave=False):
 	assert(data.ndim == 2 or data.ndim == 3), "Input data should have 2 dimensions"
@@ -46,19 +51,11 @@ def plot_and_save_rgb(data, out_dirpath='./', out_filename='out_img', min_val=No
 	(fig, ax) = plt.subplots()
 	img = ax.imshow(data, vmin=min_val, vmax=max_val)
 	if(rm_ticks): remove_ticks()
-	if(add_colorbar):
-		set_cbar(cbar_orientation) 
-		# divider = make_axes_locatable(ax)
-		# if(cbar_orientation == 'vertical'): 
-		# 	cax = divider.append_axes('right', size='4%', pad=0.05)
-		# 	# cax = divider.append_axes('right', size='10%', pad=0.05)
-		# else: cax = divider.append_axes('bottom', size='10%', pad=0.05)
-		# fig.colorbar(img, cax=cax, orientation=cbar_orientation)
+	if(add_colorbar): set_cbar(cbar_orientation) 
 	if(add_title): plt.title(out_filename)
 	if(save_fig): 	
 		save_rgb(out_dirpath, out_filename, file_ext=file_ext, rm_ticks=False)
-		if(use_imsave):
-			plt.imsave(out_dirpath+'/image_'+out_filename+'.'+file_ext, data, vmin=min_val, vmax=max_val)
+		if(use_imsave): save_img(data, out_dirpath, out_filename, min_val=min_val, max_val=max_val, file_ext=file_ext)
 
 def set_cbar(img, cbar_orientation='vertical'):
 	fig = plt.gcf()
