@@ -100,12 +100,13 @@ def calc_mean_percentile_errors(errors, percentiles=[0.5, 0.75, 0.9, 1.0]):
 	percentile_mask = percentile_mask.reshape(errors_shape)
 	return (percentile_mean_errors, percentile_mask)
 
-def domain2index(val, max_domain_val, n):
+def domain2index(val, max_domain_val, n, is_cicular=True):
 	'''
 		Assumes domain is between 0 and max_domain_val
 	'''
 	delta = max_domain_val / n
 	indeces = np.round(val / delta).astype(np.int32)
-	indeces[indeces == n] = 0 # Wrap around the indeces that were closer to the top boundary
+	if(is_circular): indeces[indeces == n] = 0 # Wrap around the indeces that were closer to the top boundary
+	else: indeces[indeces == n] = n-1 # do not wrap around if domain is not circular
 	return indeces
 
