@@ -105,8 +105,7 @@ def domain2index(val, max_domain_val, n, is_circular=True):
 		Assumes domain is between 0 and max_domain_val
 	'''
 	delta = max_domain_val / n
-	indeces = np.round(val / delta).astype(np.int32)
+	indeces = np.array(np.round(val / delta)).astype(np.int32)
 	if(is_circular): indeces[indeces == n] = 0 # Wrap around the indeces that were closer to the top boundary
 	else: indeces[indeces == n] = n-1 # do not wrap around if domain is not circular
 	return indeces
-
