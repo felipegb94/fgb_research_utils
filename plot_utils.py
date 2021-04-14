@@ -41,7 +41,8 @@ def save_rgb( dirpath = '.', filename = 'curr_rgb', file_ext='svg', rm_ticks=Tru
 
 def save_img(data, out_dirpath, out_filename, min_val=0, max_val=None, file_ext='png'):
 	if(max_val is None): max_val = data.mean() + 3*data.std()
-	plt.imsave(out_dirpath+'/image_'+out_filename+'.'+file_ext, data, vmin=min_val, vmax=max_val)
+	out_filepath = os.path.join(out_dirpath, 'image_'+out_filename+'.'+file_ext)
+	plt.imsave(out_filepath, data, vmin=min_val, vmax=max_val)
 
 def plot_and_save_rgb(data, out_dirpath='./', out_filename='out_img', min_val=None, max_val=None, add_colorbar=False, rm_ticks=True, cbar_orientation='vertical', file_ext='png', save_fig=False, add_title=False, use_imsave=False):
 	assert(data.ndim == 2 or data.ndim == 3), "Input data should have 2 dimensions"
