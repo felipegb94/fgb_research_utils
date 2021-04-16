@@ -7,7 +7,7 @@ from IPython.core import debugger
 breakpoint = debugger.set_trace
 
 ## Local Imports
-from .np_utils import vectorize_tensor, to_nparray, get_extended_domain, to_nparray
+from .np_utils import vectorize_tensor, unvectorize_tensor, to_nparray, get_extended_domain, extend_tensor_circularly
 from .shared_constants import *
 
 # Smoothing windows that are available to band-limit a signal
@@ -288,3 +288,48 @@ def broadcast_toeplitz( C_tensor, R_tensor=None):
 	# `indx` is a 2D array of indices into the 1D array `vals`, arranged so
 	# that `vals[indx]` is the Toeplitz matrix.
 	return vals_tensor[..., indx]
+
+def max_gaussian_center_of_mass_mle(transient, tbins=None, sigma_tbins = 1):
+	'''
+		In this function we find the maximum of the transient and then calculate the center of mass in the neighborhood of the maximum.
+		NOTE: At low SNR, low depths will have lower depth error on average than far away depths. 
+		This is because, at low SNR (low SBR/low photon counts), it becomes very likely that there are multiple maximums, some maximums are 
+		due to the signal and others due to ambient photons. And since numpy's argmax function always takes the 1st maximum it finds, then at low depths
+		the maximum due to the signal are preferred, but at large depths the maximums due to ambient (that come before) are chosen.
+	'''
+	# Reshape transient to simplify vectorized operations
+	(transient, transient_original_shape) = vectorize_tensor(transient)
+	n_elems = transient.shape[0]
+	n_tbins = transient.shape[-1]
+	# Remove ambient (assume that median is a good estimate of ambient component)
+	ambient_estimate = np.median(transient, axis=-1, keepdims=True)
+	transient_noamb = transient - ambient_estimate
+	# Make sure there are not negative values
+	transient_noamb[transient_noamb < 0] = 0
+	# Find start and end tbin of gaussian pulse
+	argmax_tbin = np.argmax(transient, axis=-1)
+	# start_tbin = np.clip(argmax_tbin - int(np.ceil(2*sigma_tbins)), 0, n_tbins)
+	# end_tbin = np.clip(argmax_tbin + int(np.ceil(2*sigma_tbins)) + 1, 0, n_tbins)
+	start_tbin = argmax_tbin - int(np.ceil(2*sigma_tbins))
+	end_tbin = argmax_tbin + int(np.ceil(2*sigma_tbins)) + 1
+	# Create a dummy tbin array if tbins are not given
+	if(tbins is None): tbins = np.arange(0, n_tbins) 
+	assert(transient.shape[-1] == len(tbins)), 'transient and tbins should have the same number of elements'
+	# For each 1D transient calculate the center of mass max likelihood estimate
+	center_of_mass_mle = np.zeros((n_elems,))
+	extended_tbins = get_extended_domain(tbins, axis=-1)
+	extended_transient_noamb = extend_tensor_circularly(transient_noamb, axis=-1)
+	# for i in range(n_elems):
+	# 	tbin_vec = tbins[start_tbin[i]:end_tbin[i]]
+	# 	transient_vec = transient_noamb[i, start_tbin[i]:end_tbin[i]]
+	# 	center_of_mass_mle[i] = np.dot(transient_vec, tbin_vec) / (np.sum(transient_vec) + EPSILON)
+	for i in range(n_elems):
+		start_idx = start_tbin[i]+n_tbins
+		end_idx = end_tbin[i]+n_tbins
+		tbin_vec = extended_tbins[start_idx:end_idx]
+		transient_vec = extended_transient_noamb[i, start_idx:end_idx]
+		center_of_mass_mle[i] = np.dot(transient_vec, tbin_vec) / (np.sum(transient_vec) + EPSILON)
+	# Reshape to original shapes, useful when dealing with images
+	transient = unvectorize_tensor(transient, transient_original_shape)
+	center_of_mass_mle = center_of_mass_mle.reshape(transient_original_shape[0:-1])
+	return center_of_mass_mle
