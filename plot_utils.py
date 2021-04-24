@@ -31,7 +31,6 @@ def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_im
 				format=file_ext
 				)
 	
-
 def save_currfig_png( dirpath = '.', filename = 'curr_fig'  ): 
 	save_currfig( dirpath = dirpath, filename = filename, file_ext = 'png' )
 

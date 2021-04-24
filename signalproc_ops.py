@@ -333,3 +333,21 @@ def max_gaussian_center_of_mass_mle(transient, tbins=None, sigma_tbins = 1):
 	transient = unvectorize_tensor(transient, transient_original_shape)
 	center_of_mass_mle = center_of_mass_mle.reshape(transient_original_shape[0:-1])
 	return center_of_mass_mle
+
+def haar_matrix(n, n_levels):
+	assert(n_levels >= 0), 'n_levels should be larger than '
+	n_codes = np.power(2, n_levels)
+	assert((n % n_codes) == 0), "only implemented multiples of 2^n_levels"
+	H = np.zeros((n, n_codes))
+	for i in range(n_levels+1):
+		curr_total_codes = np.power(2, i)
+		n_codes_at_curr_lvl = int(np.ceil(curr_total_codes / 2))
+		half_duty_len = int(n / curr_total_codes)
+		curr_start_code_idx = int(curr_total_codes - n_codes_at_curr_lvl)
+		for j in range(n_codes_at_curr_lvl):
+			start_idx = (j*half_duty_len*2)
+			mid_point_idx = start_idx + half_duty_len
+			end_idx = start_idx + 2*half_duty_len
+			H[start_idx:mid_point_idx, curr_start_code_idx+j] = 1.0
+			H[mid_point_idx:end_idx, curr_start_code_idx+j] = -1.0
+	return H
