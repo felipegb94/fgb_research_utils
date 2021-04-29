@@ -116,6 +116,11 @@ def set_plot_border_visibility(top_visibility=True, bottom_visibility=True, righ
 def remove_box():
 	plt.box(False)
 
+def set_xy_box():
+	gca = plt.gca()
+	gca.spines["right"].set_visible(False)
+	gca.spines["top"].set_visible(False)
+
 def set_legend(legend_strings, fontsize=12, loc='best', n_cols=1):
 	plt.legend(legend_strings, ncol=n_cols, loc=loc, fontsize=fontsize)
 
