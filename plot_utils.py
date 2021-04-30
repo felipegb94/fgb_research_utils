@@ -64,7 +64,8 @@ def set_cbar(img, cbar_orientation='vertical'):
 	if(cbar_orientation == 'vertical'): 
 		cax = divider.append_axes('right', size='4%', pad=0.05)
 	else: cax = divider.append_axes('bottom', size='7%', pad=0.05)
-	fig.colorbar(img, cax=cax, orientation=cbar_orientation)
+	cb = fig.colorbar(img, cax=cax, orientation=cbar_orientation)
+	cb.ax.tick_params(labelsize=12)
 	plt.sca(ax) # Set axis back to what it was
 	# fig.colorbar(img, orientation=cbar_orientation, ax=ax)
 
