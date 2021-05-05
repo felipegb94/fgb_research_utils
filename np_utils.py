@@ -10,6 +10,8 @@ from IPython.core import debugger
 breakpoint = debugger.set_trace
 
 #### Local imports
+from .shared_constants import *
+
 
 def vectorize_tensor(tensor, axis=-1):
 	'''
@@ -109,3 +111,27 @@ def domain2index(val, max_domain_val, n, is_circular=True):
 	if(is_circular): indeces[indeces == n] = 0 # Wrap around the indeces that were closer to the top boundary
 	else: indeces[indeces == n] = n-1 # do not wrap around if domain is not circular
 	return indeces
+
+def are_orthogonal(v, u):
+	'''
+		Check if v is orthogonal to u
+	'''
+	assert(v.ndim == 1), "v should be a vector"
+	assert(u.ndim == 1), "u should be a vector"
+	assert(u.shape == v.shape), "u and v should match dims"
+	return np.abs(np.dot(v, u) / v.size) <= EPSILON
+
+def is_mutually_orthogonal(X):
+	'''
+		Check if all cols are mutually orthogonal
+	'''
+	assert(X.ndim == 2), "X should be a matrix"
+	(n_rows, n_cols) = X.shape
+	for i in range(n_cols):
+		v_i = X[:, i]
+		for j in range(n_cols):
+			v_j = X[:, j]
+			# If i equals j skip,  If vectors are not orthogonal return false
+			if((i != j) and (not are_orthogonal(v_i, v_j))):
+				return False
+	return True	

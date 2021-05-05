@@ -76,32 +76,36 @@ def draw_histogram(x, height, draw_line=True):
 	if(draw_line):
 		curr_ax.plot(x, height, linewidth=2)
 
-def remove_ticks():
-	plt.tick_params(
+def remove_ticks(ax = None):
+	if(ax is None): ax = plt.gca()
+	ax.tick_params(
 		axis='both',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
 		bottom=False, top=False, left=False, right=False,      # ticks along the bottom edge are off
 		labelbottom=False, labeltop=False, labelleft=False, labelright=False
 		) # labels along the bottom edge are off
 
-def remove_xticks():
-	plt.tick_params(
+def remove_xticks(ax = None):
+	if(ax is None): ax = plt.gca()
+	ax.tick_params(
 		axis='x',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
 		bottom=False, top=False,      # ticks along the bottom edge are off
 		labelbottom=False, labeltop=False
 		) # labels along the bottom edge are off
 
-def remove_yticks():
-	plt.tick_params(
+def remove_yticks(ax = None):
+	if(ax is None): ax = plt.gca()
+	ax.tick_params(
 		axis='y',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
 		left=False, right=False,      # ticks along the bottom edge are off
 		labelleft=False, labelright=False
 		) # labels along the bottom edge are off
 
-def set_ticks(fontsize=12):
-	plt.tick_params(
+def set_ticks(ax = None, fontsize=12):
+	if(ax is None): ax = plt.gca()
+	ax.tick_params(
 		axis='both',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
 		labelsize=fontsize
@@ -169,4 +173,9 @@ def calc_errbars(true_vals, meas_vals, axis=0):
 def calc_mean_errbars(y, axis=0):
     y_mean = np.mean(y, axis=axis)
     y_negpos_mae = calc_errbars(y_mean, y, axis=axis)
-    return y_negpos_mae 
+    return y_negpos_mae
+
+# def set_custom_rcparams():
+# 	plt.rcParams.update({
+# 		"text.usetex": True,
+# 	})
