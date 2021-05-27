@@ -175,6 +175,13 @@ def calc_mean_errbars(y, axis=0):
     y_negpos_mae = calc_errbars(y_mean, y, axis=axis)
     return y_negpos_mae
 
+def get_good_min_max_range(img):
+	mean_val = np.mean(img)
+	stddev_val = np.std(img)
+	vmin = mean_val - 2*stddev_val
+	vmax = mean_val + 2*stddev_val
+	return (vmin, vmax)
+	
 # def set_custom_rcparams():
 # 	plt.rcParams.update({
 # 		"text.usetex": True,
