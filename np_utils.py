@@ -102,6 +102,26 @@ def calc_mean_percentile_errors(errors, percentiles=[0.5, 0.75, 0.9, 1.0]):
 	percentile_mask = percentile_mask.reshape(errors_shape)
 	return (percentile_mean_errors, percentile_mask)
 
+def calc_eps_tolerance_error(errors, eps = 0.):
+	assert(eps >= 0.), "eps should be non-negative"
+	n_eps_tol_errors = np.sum(errors <= (eps + EPSILON)).astype(errors.dtype)
+	return n_eps_tol_errors / errors.size
+
+def calc_error_metrics(errors, percentiles=[0.5, 0.75, 0.9, 1.0], eps_list=[1.], delta_eps = 1.):
+	metrics = {}
+	metrics['mae'] = np.mean(errors)
+	metrics['rmse'] = np.sqrt(np.mean(np.square(errors)))
+	metrics['medae'] = np.median(errors)
+	(percentile_mean_errors, percentile_mask) = calc_mean_percentile_errors(errors, percentiles=percentiles)
+	metrics['percentile_mae'] = percentile_mean_errors
+	assert(delta_eps > 0.), "delta_eps should be nonnegative"
+	scaled_errors = errors / delta_eps
+	metrics['0_tol_errs'] = calc_eps_tolerance_error(scaled_errors, eps = 0.)
+	for i in range(len(eps_list)):
+		metrics['{}_tol_errs'.format(int(eps_list[i]))] = calc_eps_tolerance_error(scaled_errors, eps = eps_list[i])
+	return metrics
+
+
 def domain2index(val, max_domain_val, n, is_circular=True):
 	'''
 		Assumes domain is between 0 and max_domain_val
