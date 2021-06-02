@@ -121,6 +121,13 @@ def calc_error_metrics(errors, percentiles=[0.5, 0.75, 0.9, 1.0], eps_list=[1.],
 		metrics['{}_tol_errs'.format(int(eps_list[i]))] = calc_eps_tolerance_error(scaled_errors, eps = eps_list[i])
 	return metrics
 
+def print_error_metrics(metrics, prefix=''):
+	print("{} mae = {:.2f}".format(prefix, metrics['mae']))
+	print("{} rmse = {:.2f}".format(prefix, metrics['rmse']))
+	print("{} medae = {:.2f}".format(prefix, metrics['medae']))
+	print("{} percentile_mae = {}".format(prefix, metrics['percentile_mae']))
+	print("{} 0_tol_errs = {}".format(prefix, metrics['0_tol_errs']))
+	print("{} 1_tol_errs = {}".format(prefix, metrics['1_tol_errs']))
 
 def domain2index(val, max_domain_val, n, is_circular=True):
 	'''

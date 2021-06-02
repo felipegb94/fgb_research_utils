@@ -5,6 +5,7 @@ import numpy as np
 
 ## Local Imports
 
+HALFPI = 0.5*np.pi
 PI = np.pi
 TWOPI = 2*np.pi
 SPEED_OF_LIGHT = 3e8 # Speed of light in meters per second

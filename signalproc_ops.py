@@ -244,13 +244,16 @@ def get_random_gaussian_pulse_params(time_domain=None, n=1000, min_max_sigma=Non
 	(time_domain, n, tau, dt) = verify_time_domain(time_domain, n)
 	mu = tau*np.random.rand(n_samples)
 	if(min_max_sigma is None): min_max_sigma = (1, 10)
-	sigma = dt*np.random.randint(low=min_max_sigma[0], high=min_max_sigma[1], size=(n_samples,))
+	if(min_max_sigma[1] == min_max_sigma[0]): sigma = np.ones_like(mu)*min_max_sigma[0]
+	else: sigma = dt*np.random.randint(low=min_max_sigma[0], high=min_max_sigma[1], size=(n_samples,))
 	return (mu, sigma)
 
 def get_random_expgaussian_pulse_params(time_domain=None, n=1000, min_max_sigma=None, min_max_lambda=None, n_samples=1):
 	(time_domain, n, tau, dt) = verify_time_domain(time_domain, n)
 	(mu, sigma) = get_random_gaussian_pulse_params(time_domain=time_domain, n=n, min_max_sigma=min_max_sigma, n_samples=n_samples)
 	if(min_max_lambda is None): min_max_lambda = (1, 50)
+	if(min_max_lambda[1] == min_max_lambda[0]): exp_lambda = np.ones_like(mu)*min_max_lambda[0]
+	else: exp_lambda = dt*np.random.randint(low=min_max_lambda[0], high=min_max_lambda[1], size=(n_samples,))
 	exp_lambda = 1. / (dt*np.random.randint(low=min_max_lambda[0], high=min_max_lambda[1], size=(n_samples,)))
 	return (mu, sigma, exp_lambda)
 
