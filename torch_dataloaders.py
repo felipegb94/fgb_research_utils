@@ -34,8 +34,10 @@ class MultiFolderPairedNumpyData(torch.utils.data.Dataset):
 		self.n_dirpaths = len(dirpath_list)
 		(self.base_filenames, self.file_ext_per_dirpath) = get_multi_folder_paired_fnames(dirpath_list, self.valid_file_ext)
 		self.n_samples = len(self.base_filenames)
+	
 	def __len__(self):
 		return self.n_samples
+	
 	def __getitem__(self, idx):
 		np_data_sample = []
 		curr_base_fname = self.base_filenames[idx]
@@ -43,6 +45,14 @@ class MultiFolderPairedNumpyData(torch.utils.data.Dataset):
 			curr_fpath = os.path.join(self.dirpath_list[i], curr_base_fname + '.' + self.file_ext_per_dirpath[i])
 			np_data_sample.append(np.load(curr_fpath))
 		return (np_data_sample, curr_base_fname)
+
+	def get_sample(self, sample_filename):
+		try:
+			idx = self.base_filenames.index(sample_filename)
+			return self.__getitem__(idx)
+		except ValueError:
+			print("{} not in datasets".format(sample_filename))
+			return None
 
 if __name__=='__main__':
 	dirpath1 = '/home/felipe/Dropbox/research_projects/data/synthetic_data_min/data_no-conductors_no-dielectric_automatic/transient_images_120x160_nt-2000'
