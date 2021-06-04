@@ -125,8 +125,10 @@ def print_error_metrics(metrics, prefix=''):
 	print("{} mae = {:.2f}".format(prefix, metrics['mae']))
 	# print("{} rmse = {:.2f}".format(prefix, metrics['rmse']))
 	print("{} medae = {:.2f}".format(prefix, metrics['medae']))
-	print("{} percentile_mae = {}".format(prefix, np.around(metrics['percentile_mae'], decimals=2)))
-	print("{} 1_tol_errs = {}".format(prefix, metrics['1_tol_errs']))
+	np.set_printoptions(suppress=True)
+	print("{} percentile_mae = {}".format(prefix, metrics['percentile_mae'].round(decimals=2)))
+	np.set_printoptions(suppress=False)
+	print("{} 1_tol_errs = {:.2f}".format(prefix, metrics['1_tol_errs']))
 	# print("{} 0_tol_errs = {}".format(prefix, metrics['0_tol_errs']))
 
 def domain2index(val, max_domain_val, n, is_circular=True):
