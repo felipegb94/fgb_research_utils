@@ -46,10 +46,13 @@ class MultiFolderPairedNumpyData(torch.utils.data.Dataset):
 			np_data_sample.append(np.load(curr_fpath))
 		return (np_data_sample, curr_base_fname)
 
-	def get_sample(self, sample_filename):
+	def get_sample(self, sample_filename, **kwargs):
+		'''
+			kwargs are any extra key-word args that __getitem__ may take as input
+		'''
 		try:
 			idx = self.base_filenames.index(sample_filename)
-			return self.__getitem__(idx)
+			return self.__getitem__(idx, **kwargs)
 		except ValueError:
 			print("{} not in datasets".format(sample_filename))
 			return None
