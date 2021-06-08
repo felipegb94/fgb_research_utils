@@ -62,8 +62,12 @@ if __name__=='__main__':
 
 	dataset = MultiFolderPairedNumpyData(dirpaths)
 	loader = DataLoader(dataset, batch_size=2, shuffle=False, num_workers=1)
-	
+
+	# if we use get_sample we can get the numpy object directyl
+	(np_data, fname) = dataset.get_sample(dataset.base_filenames[0])
+
 	for step, data in enumerate(loader):
-		(np_data, fname) = data
+		# the loader automatically casts everyting as tensor
+		(data_sample, fname) = data
 		breakpoint()
 		print("Loaded: {}".format(fname))
