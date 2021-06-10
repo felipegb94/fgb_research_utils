@@ -114,6 +114,7 @@ def calc_error_metrics(errors, percentiles=[0.5, 0.75, 0.95, 0.99], eps_list=[1.
 	metrics['medae'] = np.median(errors)
 	(percentile_mean_errors, percentile_mask) = calc_mean_percentile_errors(errors, percentiles=percentiles)
 	metrics['percentile_mae'] = percentile_mean_errors
+	metrics['percentiles'] = percentiles
 	assert(delta_eps > 0.), "delta_eps should be nonnegative"
 	scaled_errors = errors / delta_eps
 	metrics['0_tol_errs'] = calc_eps_tolerance_error(scaled_errors, eps = 0.)
