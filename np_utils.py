@@ -69,7 +69,7 @@ def get_extended_domain(domain, axis=-1):
 	domain_right = domain+(max_val + delta)
 	return np.concatenate((domain_left, domain, domain_right), axis=axis)
 
-def calc_mean_percentile_errors(errors, percentiles=[0.5, 0.75, 0.9, 1.0]):
+def calc_mean_percentile_errors(errors, percentiles=[0.5, 0.75, 0.95, 0.99]):
 	'''
 		Sort the errors from lowest to hightest.
 		Given a list of percentiles calculate the mean of the sorted errors within each percentile.
@@ -107,7 +107,7 @@ def calc_eps_tolerance_error(errors, eps = 0.):
 	n_eps_tol_errors = np.sum(errors <= (eps + EPSILON)).astype(errors.dtype)
 	return n_eps_tol_errors / errors.size
 
-def calc_error_metrics(errors, percentiles=[0.5, 0.75, 0.9, 1.0], eps_list=[1.], delta_eps = 1.):
+def calc_error_metrics(errors, percentiles=[0.5, 0.75, 0.95, 0.99], eps_list=[1.], delta_eps = 1.):
 	metrics = {}
 	metrics['mae'] = np.mean(errors)
 	metrics['rmse'] = np.sqrt(np.mean(np.square(errors)))
