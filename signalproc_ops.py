@@ -37,6 +37,10 @@ def circular_corr( v1, v2, axis=-1 ):
 	v1corrv2 = np.fft.ifft( np.fft.fft( v1, axis=axis ).conj() * np.fft.fft( v2, axis=axis ), axis=axis ).real
 	return v1corrv2
 
+def circular_matched_filter(s, template, axis=-1):
+	assert(s.shape[axis] == template.shape[axis]), "input signal and template dims need to match at axis"
+	corrf = circular_corr(template, s, axis=axis)
+	return np.argmax(corrf, axis=axis)
 
 def get_smoothing_window(N=100,window_len=11,window='flat'):
 	"""
@@ -98,7 +102,7 @@ def smooth(x, window_len=11, window='flat'):
 		return x
 	# Get smoothing window 
 	w = get_smoothing_window( N = len( x ), window = window, window_len = window_len )
-	y = np.real( CircularConv( x, w ) ) / ( w.sum() )
+	y = np.real( circular_conv( x, w ) ) / ( w.sum() )
 	# y = np.real(np.fft.ifft(np.fft.fft(x)*np.fft.fft(w)))/(w.sum())
 	#### The line below performs the same operation as the line above but slower
 	# np.convolve(w/(w.sum()),s,mode='valid')
@@ -115,7 +119,7 @@ def smooth_tensor(X, window_duty=0.1, window='hanning'):
 	window = get_smoothing_window(N=n, window_len=window_duty*n, window=window)
 	window = window.reshape((1,n))
 
-	Y = np.real( CircularConv(X, window) ) / (window.sum())
+	Y = np.real( circular_conv(X, window) ) / (window.sum())
 
 	return Y.reshape(X_shape)
 
