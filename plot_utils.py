@@ -3,7 +3,7 @@ import os
 
 #### Library imports
 import numpy as np
-import matplotlib
+import matplotlib as mpl 
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from IPython.core import debugger
@@ -33,6 +33,14 @@ def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_im
 	
 def save_currfig_png( dirpath = '.', filename = 'curr_fig'  ): 
 	save_currfig( dirpath = dirpath, filename = filename, file_ext = 'png' )
+
+def save_ax(ax = None, dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_imsave=False):
+	if(ax is None): ax = plt.gca()
+	plt.sca(ax)
+	save_currfig(dirpath=dirpath, filename=filename, file_ext=file_ext, use_imsave=use_imsave)
+
+def save_ax_png(ax=None, dirpath = '.', filename = 'curr_fig'  ): 
+	save_ax(ax=ax, dirpath = dirpath, filename = filename, file_ext = 'png' )
 
 def save_rgb( dirpath = '.', filename = 'curr_rgb', file_ext='svg', rm_ticks=True):
 	if(rm_ticks): remove_ticks()
@@ -126,14 +134,18 @@ def set_xy_box():
 	gca.spines["right"].set_visible(False)
 	gca.spines["top"].set_visible(False)
 
-def set_legend(legend_strings, fontsize=12, loc='best', n_cols=1):
-	plt.legend(legend_strings, ncol=n_cols, loc=loc, fontsize=fontsize)
+def set_legend(legend_strings=None, ax=None, fontsize=12, loc='best', n_cols=1):
+	if(ax is None): ax = plt.gca()	
+	if(legend_strings is None):
+		ax.legend(ncol=n_cols, loc=loc, fontsize=fontsize)
+	else:
+		ax.legend(legend_strings, ncol=n_cols, loc=loc, fontsize=fontsize)
 
 def get_color_cycle(): 
 	return plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 def reset_color_cycle():
-	curr_version = matplotlib.__version__.split('.')
+	curr_version = mpl.__version__.split('.')
 	if(int(curr_version[0]) <= 1):
 		if((int(curr_version[0]) == 1) and (int(curr_version[1]) > 5)): plt.gca().set_prop_cycle(None)
 		else: plt.gca().set_color_cycle(None)
