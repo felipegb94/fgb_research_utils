@@ -119,12 +119,30 @@ def set_ticks(ax = None, fontsize=12):
 		labelsize=fontsize
 		) # labels along the bottom edge are off
 
+def set_xtick_labels(x_max_val, x_labels, ax=None ):
+	if(ax is None): ax = plt.gca()
+	ax.set_xticks(np.linspace(0, x_max_val, len(x_labels)))
+	ax.set_xticklabels(x_labels)
+
+def set_ytick_labels(y_max_val, y_labels, ax=None ):
+	if(ax is None): ax = plt.gca()
+	ax.set_yticks(np.linspace(0, y_max_val, len(y_labels)))
+	ax.set_yticklabels(y_labels)
+
 def set_plot_border_visibility(top_visibility=True, bottom_visibility=True, right_visibility=True, left_visibility=True):
 	ax = plt.gca()
 	ax.spines['top'].set_visible(top_visibility)
 	ax.spines['bottom'].set_visible(bottom_visibility)
 	ax.spines['right'].set_visible(right_visibility)
-	ax.spines['left'].set_visible(left_visibility)	
+	ax.spines['left'].set_visible(left_visibility)
+
+def set_axis_linewidth(ax=None, width=1):
+	if(ax is None): ax=plt.gca()
+	# Set with of axis lines
+	for axis in ['top','bottom','left','right']: ax.spines[axis].set_linewidth(3)
+	# Set with of ticks
+	ax.xaxis.set_tick_params(width=0.75*width)
+	ax.yaxis.set_tick_params(width=0.75*width)
 
 def remove_box():
 	plt.box(False)
@@ -183,9 +201,9 @@ def calc_errbars(true_vals, meas_vals, axis=0):
 	return np.stack((neg_mae, pos_mae), axis=0)
 
 def calc_mean_errbars(y, axis=0):
-    y_mean = np.mean(y, axis=axis)
-    y_negpos_mae = calc_errbars(y_mean, y, axis=axis)
-    return y_negpos_mae
+	y_mean = np.mean(y, axis=axis)
+	y_negpos_mae = calc_errbars(y_mean, y, axis=axis)
+	return y_negpos_mae
 
 def get_good_min_max_range(img):
 	mean_val = np.mean(img)
@@ -194,7 +212,13 @@ def get_good_min_max_range(img):
 	vmax = mean_val + 2*stddev_val
 	return (vmin, vmax)
 	
-# def set_custom_rcparams():
-# 	plt.rcParams.update({
-# 		"text.usetex": True,
-# 	})
+def enable_latex_fonts():
+	plt.rcParams.update({
+		"text.usetex": True,
+	})
+
+def disable_latex_fonts():
+	plt.rcParams.update({
+		"text.usetex": False,
+	})
+
