@@ -16,7 +16,7 @@ def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_im
 	os.makedirs(dirpath, exist_ok=True)
 	# If filename contains file extension then ignore the input file ext
 	# Else add the input file etension
-	if('.' in  filename): filepath = os.path.join(dirpath, filename)
+	if('.{}'.format(file_ext) in  filename): filepath = os.path.join(dirpath, filename)
 	else: filepath = os.path.join(dirpath, filename) + '.{}'.format(file_ext)
 	plt.savefig(filepath, 
 				dpi=None, 
