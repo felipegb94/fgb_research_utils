@@ -159,6 +159,14 @@ def set_legend(legend_strings=None, ax=None, fontsize=12, loc='best', n_cols=1):
 	else:
 		ax.legend(legend_strings, ncol=n_cols, loc=loc, fontsize=fontsize)
 
+def update_fig_size(fig=None, height=4, width=6):
+	if(fig is None):
+		fig = plt.gcf()
+		fig.set_size_inches(width, height, forward=True)
+	else:
+		fig.set_size_inches(width, height, forward=True)
+	return fig
+
 def get_color_cycle(): 
 	return plt.rcParams['axes.prop_cycle'].by_key()['color']
 
@@ -209,7 +217,7 @@ def get_good_min_max_range(img):
 	mean_val = np.mean(img)
 	stddev_val = np.std(img)
 	vmin = mean_val - 2*stddev_val
-	vmax = mean_val + 2*stddev_val
+	vmax = mean_val + 2.5*stddev_val
 	return (vmin, vmax)
 	
 def enable_latex_fonts():
