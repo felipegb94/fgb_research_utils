@@ -100,6 +100,9 @@ def smooth(x, window_len=11, window='flat'):
 		raise ValueError("smooth only accepts 1 dimension arrays.")
 	if( window_len < 3 ):
 		return x
+	if( window_len > len(x)):
+		print("Not smoothing. signal is smaller than window lengths")
+		return x
 	# Get smoothing window 
 	w = get_smoothing_window( N = len( x ), window = window, window_len = window_len )
 	y = np.real( circular_conv( x, w ) ) / ( w.sum() )
