@@ -12,6 +12,9 @@ breakpoint = debugger.set_trace
 ## Local Imports
 
 
+def normalize_known_range(x, min_val=0., max_val=1.):
+	# First normalize signal between 0 and 1, and multiply 2 and subtract 1 to make it -1 to 1
+	return (((x - min_val) / (max_val - min_val))*2) - 1 
 
 def softmax_scoring(scores, gt_indeces, beta=300., eps=1, axis=-1):
 	'''
@@ -27,7 +30,7 @@ def softmax_scoring(scores, gt_indeces, beta=300., eps=1, axis=-1):
 		offset = -1*eps + i
 		indeces = torch.clamp(gt_indeces + offset, min=min_idx, max=max_idx-1)
 		selected_scores = softmax_scores.gather(axis, indeces.long().unsqueeze(axis))
-	return selected_scores.sum()
+	return selected_scores.sum()  
 
 def multi_img_random_hflip(img_list):
 	'''
