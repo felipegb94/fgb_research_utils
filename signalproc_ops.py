@@ -22,7 +22,7 @@ def circular_conv( v1, v2, axis=-1 ):
 	Returns:
 		v1convv2 (numpy.ndarray): convolution result. N x 1 vector.
 	"""
-	v1convv2 = np.fft.irfft( np.fft.rfft( v1, axis=axis ) * np.fft.rfft( v2, axis=axis ), axis=axis, n=v1.shape[-1] )
+	v1convv2 = np.fft.irfft( np.fft.rfft( v1, axis=axis ) * np.fft.rfft( v2, axis=axis ), axis=axis, n=v1.shape[axis] )
 	return v1convv2
 
 def circular_corr( v1, v2, axis=-1 ):
