@@ -361,3 +361,21 @@ def haar_matrix(n, n_levels):
 			H[start_idx:mid_point_idx, curr_start_code_idx+j] = 1.0
 			H[mid_point_idx:end_idx, curr_start_code_idx+j] = -1.0
 	return H
+
+def generate_gray_code(n_bits):
+	assert(n_bits >= 1), "invalid n_bits"
+	n_binary_codes = np.power(2, n_bits)
+	n_binary_codes_over2 = int(n_binary_codes / 2)
+	codes = np.zeros((n_binary_codes, n_bits))
+	codes[1, -1] = 1 
+	for i in range(n_bits-1):
+		curr_n_bits = i + 2 
+		start_code_idx = 0
+		end_code_idx1 = np.power(2, i+1)
+		end_code_idx2 = 2*end_code_idx1
+		# Reflect 
+		reflected_codes = np.flipud(codes[start_code_idx:end_code_idx1, :])
+		codes[end_code_idx1:end_code_idx2, :] = reflected_codes
+		# Prefix with ones
+		codes[end_code_idx1:end_code_idx2, -curr_n_bits] = 1
+	return codes
