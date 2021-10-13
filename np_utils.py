@@ -108,6 +108,9 @@ def calc_eps_tolerance_error(errors, eps = 0.):
 	return n_eps_tol_errors / errors.size
 
 def calc_error_metrics(errors, percentiles=[0.5, 0.75, 0.95, 0.99], eps_list=[1.], delta_eps = 1.):
+	'''
+		delta_eps is the delta for the X_epsilon errors
+	'''
 	metrics = {}
 	metrics['mae'] = np.mean(errors)
 	metrics['rmse'] = np.sqrt(np.mean(np.square(errors)))
