@@ -30,14 +30,19 @@ def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_im
 				# metadata=None 
 				format=file_ext
 				)
-	
+
+def save_img(data, out_dirpath, out_filename, file_ext='png'):
+	# if(max_val is None): max_val = data.mean() + 3*data.std()
+	out_filepath = os.path.join(out_dirpath, 'image_'+out_filename+'.'+file_ext)
+	plt.imsave(out_filepath, data)
+
 def save_currfig_png( dirpath = '.', filename = 'curr_fig'  ): 
 	save_currfig( dirpath = dirpath, filename = filename, file_ext = 'png' )
 
-def save_ax(ax = None, dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_imsave=False):
+def save_ax(ax = None, dirpath = '.', filename = 'curr_fig', file_ext = 'png'):
 	if(ax is None): ax = plt.gca()
 	plt.sca(ax)
-	save_currfig(dirpath=dirpath, filename=filename, file_ext=file_ext, use_imsave=use_imsave)
+	save_currfig(dirpath=dirpath, filename=filename, file_ext=file_ext)
 
 def save_ax_png(ax=None, dirpath = '.', filename = 'curr_fig'  ): 
 	save_ax(ax=ax, dirpath = dirpath, filename = filename, file_ext = 'png' )
@@ -45,11 +50,6 @@ def save_ax_png(ax=None, dirpath = '.', filename = 'curr_fig'  ):
 def save_rgb( dirpath = '.', filename = 'curr_rgb', file_ext='svg', rm_ticks=True):
 	if(rm_ticks): remove_ticks()
 	save_currfig(dirpath = dirpath, filename = filename, file_ext=file_ext)
-
-def save_img(data, out_dirpath, out_filename, min_val=0, max_val=None, file_ext='png'):
-	if(max_val is None): max_val = data.mean() + 3*data.std()
-	out_filepath = os.path.join(out_dirpath, 'image_'+out_filename+'.'+file_ext)
-	plt.imsave(out_filepath, data, vmin=min_val, vmax=max_val)
 
 def plot_and_save_rgb(data, out_dirpath='./', out_filename='out_img', min_val=None, max_val=None, add_colorbar=False, rm_ticks=True, cbar_orientation='vertical', file_ext='png', save_fig=False, add_title=False, use_imsave=False):
 	assert(data.ndim == 2 or data.ndim == 3), "Input data should have 2 dimensions"
