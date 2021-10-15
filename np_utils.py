@@ -167,4 +167,17 @@ def is_mutually_orthogonal(X):
 			# If i equals j skip,  If vectors are not orthogonal return false
 			if((i != j) and (not are_orthogonal(v_i, v_j))):
 				return False
-	return True	
+	return True
+
+def circular_signal_fit(signal):
+	'''
+		Fit a periodic signal whose domain is assumed to be between 0-1
+	'''
+	## Fit a cubic spline function to be able to generate any 
+	from scipy.interpolate import interp1d
+	nt = signal.size
+	# Extend x and y and interpolate
+	ext_x_fullres = np.arange(-nt, 2*nt) * (1. / nt)
+	ext_signal = np.concatenate((signal, signal, signal), axis=-1)
+	f = interp1d(ext_x_fullres, ext_signal, axis=-1, kind='cubic')
+	return f
