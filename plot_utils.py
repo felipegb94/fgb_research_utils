@@ -11,6 +11,10 @@ breakpoint = debugger.set_trace
 
 #### Local imports
 
+def get_ax_if_none(ax):
+	if(ax is None): return plt.gca()
+	else: return ax
+
 def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_imsave=False  ):
 	# Create directory to store figure if it does not exist
 	os.makedirs(dirpath, exist_ok=True)
@@ -40,7 +44,7 @@ def save_currfig_png( dirpath = '.', filename = 'curr_fig'  ):
 	save_currfig( dirpath = dirpath, filename = filename, file_ext = 'png' )
 
 def save_ax(ax = None, dirpath = '.', filename = 'curr_fig', file_ext = 'png'):
-	if(ax is None): ax = plt.gca()
+	ax = get_ax_if_none(ax)
 	plt.sca(ax)
 	save_currfig(dirpath=dirpath, filename=filename, file_ext=file_ext)
 
@@ -85,7 +89,7 @@ def draw_histogram(x, height, draw_line=True):
 		curr_ax.plot(x, height, linewidth=2)
 
 def remove_ticks(ax = None):
-	if(ax is None): ax = plt.gca()
+	ax = get_ax_if_none(ax)
 	ax.tick_params(
 		axis='both',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
@@ -94,7 +98,7 @@ def remove_ticks(ax = None):
 		) # labels along the bottom edge are off
 
 def remove_xticks(ax = None):
-	if(ax is None): ax = plt.gca()
+	ax = get_ax_if_none(ax)
 	ax.tick_params(
 		axis='x',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
@@ -103,7 +107,7 @@ def remove_xticks(ax = None):
 		) # labels along the bottom edge are off
 
 def remove_yticks(ax = None):
-	if(ax is None): ax = plt.gca()
+	ax = get_ax_if_none(ax)
 	ax.tick_params(
 		axis='y',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
@@ -112,7 +116,7 @@ def remove_yticks(ax = None):
 		) # labels along the bottom edge are off
 
 def set_ticks(ax = None, fontsize=12):
-	if(ax is None): ax = plt.gca()
+	ax = get_ax_if_none(ax)
 	ax.tick_params(
 		axis='both',          # changes apply to the x-axis and y-axis
 		which='both',      # both major and minor ticks are affected
@@ -120,12 +124,12 @@ def set_ticks(ax = None, fontsize=12):
 		) # labels along the bottom edge are off
 
 def set_xtick_labels(x_max_val, x_labels, ax=None ):
-	if(ax is None): ax = plt.gca()
+	ax = get_ax_if_none(ax)
 	ax.set_xticks(np.linspace(0, x_max_val, len(x_labels)))
 	ax.set_xticklabels(x_labels)
 
 def set_ytick_labels(y_max_val, y_labels, ax=None ):
-	if(ax is None): ax = plt.gca()
+	ax = get_ax_if_none(ax)
 	ax.set_yticks(np.linspace(0, y_max_val, len(y_labels)))
 	ax.set_yticklabels(y_labels)
 
@@ -137,7 +141,7 @@ def set_plot_border_visibility(top_visibility=True, bottom_visibility=True, righ
 	ax.spines['left'].set_visible(left_visibility)
 
 def set_axis_linewidth(ax=None, width=1):
-	if(ax is None): ax=plt.gca()
+	ax = get_ax_if_none(ax)
 	# Set with of axis lines
 	for axis in ['top','bottom','left','right']: ax.spines[axis].set_linewidth(3)
 	# Set with of ticks
@@ -147,13 +151,37 @@ def set_axis_linewidth(ax=None, width=1):
 def remove_box():
 	plt.box(False)
 
-def set_xy_box():
+def set_axis_linewidth(linewidth, ax=None):
+	ax = get_ax_if_none(ax)
+	for axis in ['top','bottom','left','right']:
+		ax.spines[axis].set_linewidth(linewidth)
+
+def set_xy_box(linewidth=None):
 	gca = plt.gca()
 	gca.spines["right"].set_visible(False)
 	gca.spines["top"].set_visible(False)
 
+def set_x_box():
+	gca = plt.gca()
+	gca.spines["right"].set_visible(False)
+	gca.spines["top"].set_visible(False)
+	gca.spines["left"].set_visible(False)
+	remove_yticks()
+
+def set_x_arrow(ax=None):
+	ax = get_ax_if_none(ax)
+	ax.plot(1, 0, ">k", transform=ax.get_yaxis_transform(), clip_on=False)
+
+def set_y_arrow(ax=None):
+	ax = get_ax_if_none(ax)
+	ax.plot(0, 1, "^k", transform=ax.get_xaxis_transform(), clip_on=False)
+
+def set_xy_arrow(ax=None):
+	set_x_arrow(ax)
+	set_y_arrow(ax)
+
 def set_legend(legend_strings=None, ax=None, fontsize=12, loc='best', n_cols=1):
-	if(ax is None): ax = plt.gca()	
+	ax = get_ax_if_none(ax)	
 	if(legend_strings is None):
 		ax.legend(ncol=n_cols, loc=loc, fontsize=fontsize)
 	else:
