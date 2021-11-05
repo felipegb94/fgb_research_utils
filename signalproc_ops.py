@@ -379,3 +379,20 @@ def generate_gray_code(n_bits):
 		# Prefix with ones
 		codes[end_code_idx1:end_code_idx2, -curr_n_bits] = 1
 	return codes
+
+def get_orthogonal_binary_code(c):
+	assert(c.ndim == 1), "input c should be 1D vector"
+	n = c.shape[0]
+	shift_f0_90deg = n // 4
+	# Find the repetition frequency of the code
+	f_c = np.fft.rfft(c, axis=0)
+	fk = np.abs(f_c).argmax()
+	# Shift the code
+	shift = int(np.round(shift_f0_90deg / fk))
+	c_orth = np.roll(c, shift=shift, axis=0)
+	# print("Orthogonal Measure: {}".format(np.dot(c_orth,c)))
+	return c_orth
+
+def get_dominant_freqs(Cmat, axis=0):
+	f_Cmat = np.fft.rfft(Cmat, axis=axis)
+	return np.argmax(np.abs(f_Cmat), axis=axis)
