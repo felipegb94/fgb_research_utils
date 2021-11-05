@@ -381,6 +381,9 @@ def generate_gray_code(n_bits):
 	return codes
 
 def get_orthogonal_binary_code(c):
+	'''
+		only works for square codes with 50% duty cycle
+	'''
 	assert(c.ndim == 1), "input c should be 1D vector"
 	n = c.shape[0]
 	shift_f0_90deg = n // 4
