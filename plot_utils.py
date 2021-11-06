@@ -140,21 +140,16 @@ def set_plot_border_visibility(top_visibility=True, bottom_visibility=True, righ
 	ax.spines['right'].set_visible(right_visibility)
 	ax.spines['left'].set_visible(left_visibility)
 
-def set_axis_linewidth(ax=None, width=1):
-	ax = get_ax_if_none(ax)
-	# Set with of axis lines
-	for axis in ['top','bottom','left','right']: ax.spines[axis].set_linewidth(3)
-	# Set with of ticks
-	ax.xaxis.set_tick_params(width=0.75*width)
-	ax.yaxis.set_tick_params(width=0.75*width)
-
 def remove_box():
 	plt.box(False)
 
-def set_axis_linewidth(linewidth, ax=None):
+def set_axis_linewidth(ax=None, width=1):
 	ax = get_ax_if_none(ax)
-	for axis in ['top','bottom','left','right']:
-		ax.spines[axis].set_linewidth(linewidth)
+	# Set with of axis lines
+	for axis in ['top','bottom','left','right']: ax.spines[axis].set_linewidth(width)
+	# Set with of ticks
+	ax.xaxis.set_tick_params(width=0.75*width)
+	ax.yaxis.set_tick_params(width=0.75*width)
 
 def set_xy_box(linewidth=None):
 	gca = plt.gca()
