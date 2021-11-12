@@ -18,6 +18,8 @@ def get_ax_if_none(ax):
 def save_currfig( dirpath = '.', filename = 'curr_fig', file_ext = 'png', use_imsave=False  ):
 	# Create directory to store figure if it does not exist
 	os.makedirs(dirpath, exist_ok=True)
+	# Pause to make sure plot is fully rendered and not warnings or errors are thown
+	plt.pause(0.02)
 	# If filename contains file extension then ignore the input file ext
 	# Else add the input file etension
 	if('.{}'.format(file_ext) in  filename): filepath = os.path.join(dirpath, filename)
@@ -69,7 +71,7 @@ def plot_and_save_rgb(data, out_dirpath='./', out_filename='out_img', min_val=No
 		save_rgb(out_dirpath, out_filename, file_ext=file_ext, rm_ticks=False)
 		if(use_imsave): save_img(data, out_dirpath, out_filename, min_val=min_val, max_val=max_val, file_ext=file_ext)
 
-def set_cbar(img, cbar_orientation='vertical'):
+def set_cbar(img, cbar_orientation='vertical', fontsize=14):
 	fig = plt.gcf()
 	ax = plt.gca()
 	divider = make_axes_locatable(ax)
@@ -78,7 +80,7 @@ def set_cbar(img, cbar_orientation='vertical'):
 		cax = divider.append_axes('right', size='10%', pad=0.05)
 	else: cax = divider.append_axes('bottom', size='7%', pad=0.05)
 	cb = fig.colorbar(img, cax=cax, orientation=cbar_orientation)
-	cb.ax.tick_params(labelsize=14)
+	cb.ax.tick_params(labelsize=fontsize)
 	plt.sca(ax) # Set axis back to what it was
 	# fig.colorbar(img, orientation=cbar_orientation, ax=ax)
 
