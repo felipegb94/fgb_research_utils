@@ -399,3 +399,19 @@ def get_orthogonal_binary_code(c):
 def get_dominant_freqs(Cmat, axis=0):
 	f_Cmat = np.fft.rfft(Cmat, axis=axis)
 	return np.argmax(np.abs(f_Cmat), axis=axis)
+
+def get_low_confidence_freqs(h_irf, valid_freq_thresh=0.2):
+	'''
+		Look at frequency response of h_irf vector, and find frequencies with low amplitude
+	'''
+	nt = h_irf.shape[-1]
+	abs_max_freq_idx = nt // 2
+	all_freq_idx = np.arange(0, abs_max_freq_idx+1)
+	# Calculate FFT of IRF and get frequencies with magnitude above threshold
+	f_h_irf = np.fft.rfft(h_irf)
+	amp_f_h_irf = np.abs(f_h_irf)
+	# Frequencies should have a magnitude higher than the following computed w.r.t the 1st harmonic
+	threshold = f_h_irf[1]*valid_freq_thresh
+	low_confidence_freqs = amp_f_h_irf < threshold
+	low_confidence_freq_idx = all_freq_idx[low_confidence_freqs]
+	return (low_confidence_freq_idx, low_confidence_freqs)
