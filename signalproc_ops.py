@@ -228,8 +228,8 @@ def expgaussian_pulse_erfc(time_domain, mu, sigma, exp_lambda):
 	pulse = exp_lambda*np.exp(0.5*exp_lambda*(lambda_sigma_sq + 2*mu_minus_t))*scipy.special.erfc(erfc_input)
 	return normalize_signal(pulse.squeeze(), axis=-1)
 
-def expgaussian_pulse_conv(time_domain, mu, sigma, exp_lambda):
-	gauss_pulse = gaussian_pulse(time_domain, mu, sigma)
+def expgaussian_pulse_conv(time_domain, mu, sigma, exp_lambda, circ_shifted=True):
+	gauss_pulse = gaussian_pulse(time_domain, mu, sigma, circ_shifted=circ_shifted)
 	if(exp_lambda is None): return gauss_pulse
 	exp_lambda = to_nparray(exp_lambda)
 	exp_decay = np.exp(-1*exp_lambda[:, np.newaxis]*time_domain[np.newaxis,:])
