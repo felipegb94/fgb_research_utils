@@ -2,6 +2,7 @@
 
 ## Library Imports
 import numpy as np
+import scipy
 from scipy import signal
 from IPython.core import debugger
 breakpoint = debugger.set_trace
@@ -273,13 +274,13 @@ def get_fourier_mat(n, freq_idx=None):
 	'''
 	# If no frequency indeces are given simply return the full dft matrix
 	if(freq_idx is None):
-		return scipy.linalg.dft(n).transpose()
+		return scipy.linalg.dft(n)
 	# For each frequency idx add them to their corresponding cmpx sinusoid to the matrix
 	n_freqs = len(freq_idx)
 	domain = np.arange(0, n)*(TWOPI / n)
 	fourier_mat = np.zeros((n, n_freqs), dtype=np.complex64)
 	for i in range(n_freqs):
-		fourier_mat[:, i] = np.cos(freq_idx[i]*domain) + 1j*np.sin(freq_idx[i]*domain)
+		fourier_mat[:, i] = np.cos(freq_idx[i]*domain) - 1j*np.sin(freq_idx[i]*domain)
 	return fourier_mat
 
 def broadcast_toeplitz( C_tensor, R_tensor=None):

@@ -9,5 +9,5 @@ HALFPI = 0.5*np.pi
 PI = np.pi
 TWOPI = 2*np.pi
 SPEED_OF_LIGHT = 3e8 # Speed of light in meters per second
-EPSILON = 1e-8 # Typically used to avoid division by 0
+EPSILON = 1e-6 # Typically used to avoid division by 0
 
