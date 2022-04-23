@@ -11,7 +11,6 @@ import os
 import zipfile
 
 ## Library Imports
-import numpy as np
 from IPython.core import debugger
 breakpoint = debugger.set_trace
 
@@ -26,22 +25,20 @@ def add_dir_to_zipobj(zipobj, target_dir):
             arcname = os.path.join(os.path.basename(base), file)
             zipobj.write(fn, arcname)
 
-
-# def zip_folders(zip_fname, target_dirs):            
-#     zipobj = zipfile.ZipFile(foldername + '.zip', 'w', zipfile.ZIP_DEFLATED)
-
 if __name__=='__main__':
     # The folder containing all folders that will be zipped
     base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed'
+    # Folder where all the zip files will be stored in
     out_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed_zipped'
-    # out_dirpath = './zip_outputs'
-    os.makedirs(out_dirpath, exist_ok=True)
-    assert(os.path.exists(base_dirpath)), "Invalid input base_dirpath"
-
+    if(out_dirpath is None): out_dirpath = base_dirpath
+    else: os.makedirs(out_dirpath, exist_ok=True)
     # Flags
     overwrite_existing_zip = False
     zipf_group_size = 20
     group_fname_base = 'scene_group'
+    
+    ## Make sure dirpath exists
+    assert(os.path.exists(base_dirpath)), "Invalid input base_dirpath"
 
     # Remove trailing / if needed
     if(base_dirpath[-1] == '/'): base_dirpath = base_dirpath[0:-1] 
@@ -81,12 +78,6 @@ if __name__=='__main__':
             add_dir_to_zipobj(zipobj, curr_dirpath)
         zipobj.close()
 
-
-
-    # for folder_name in folder_names:
-    #     curr_dirpath = os.path.join(base_dirpath, folder_name)
-    #     zipobj_fpath = os.path.join(out_dirpath, folder_name + '.zip')
-        
 
 
 
