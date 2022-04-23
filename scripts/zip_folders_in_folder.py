@@ -32,7 +32,7 @@ def add_dir_to_zipobj(zipobj, target_dir):
 
 if __name__=='__main__':
     # The folder containing all folders that will be zipped
-    base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed_test'
+    base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed'
     out_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed_zipped'
     # out_dirpath = './zip_outputs'
     os.makedirs(out_dirpath, exist_ok=True)
@@ -67,12 +67,19 @@ if __name__=='__main__':
             zipobj_fname = group_fname_base + '{}.zip'.format(i)
         # Compose the filepath
         zipobj_fpath = os.path.join(out_dirpath, zipobj_fname)
+        if(os.path.exists(zipobj_fpath)):
+            if(not overwrite_existing_zip):
+                print("*****Skipping {} because it already exists*****".format(zipobj_fpath))
+                continue
+            else:
+                print("*****Overwritting {}*****".format(zipobj_fpath))
         # Create zip object that we will add to
         zipobj = zipfile.ZipFile(zipobj_fpath, 'w', zipfile.ZIP_DEFLATED)
         for folder_name in curr_folder_names_to_zip:
             curr_dirpath = os.path.join(base_dirpath, folder_name)
             print("Zipping {} into {}".format(folder_name, zipobj_fpath))
             add_dir_to_zipobj(zipobj, curr_dirpath)
+        zipobj.close()
 
 
 
