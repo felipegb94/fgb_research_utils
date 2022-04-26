@@ -28,10 +28,13 @@ def add_dir_to_zipobj(zipobj, target_dir):
 if __name__=='__main__':
     # The folder containing all folders that will be zipped
     base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed'
+    base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/SimSPADDataset_nr-64_nc-64_nt-1024_tres-80ps_dark-1_psf-1'
     # Folder where all the zip files will be stored in
-    out_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed_zipped'
-    if(out_dirpath is None): out_dirpath = base_dirpath
-    else: os.makedirs(out_dirpath, exist_ok=True)
+    # out_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed_zipped'
+    out_dirpath = None
+    if(out_dirpath is None): 
+        out_dirpath = base_dirpath + '_zipped'
+    os.makedirs(out_dirpath, exist_ok=True)
     # Flags
     overwrite_existing_zip = False
     zipf_group_size = 20
