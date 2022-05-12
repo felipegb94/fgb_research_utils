@@ -70,8 +70,8 @@ def get_filepaths_in_dir(dirpath, match_str_pattern=None, only_filenames=False, 
 		If we only want the filenames and not the filepath, set only_filenames=True
 	'''
 	assert(os.path.exists(dirpath)), "Input dirpath does not exist"
-	if(match_str_pattern is None): all_matching_filepaths = glob.glob(dirpath)
-	else: all_matching_filepaths = glob.glob(os.path.join(dirpath, '*' + match_str_pattern + '*'))
+	if(match_str_pattern is None): match_str_pattern = '*'
+	all_matching_filepaths = glob.glob(os.path.join(dirpath, '*' + match_str_pattern + '*'))
 	filepaths = []
 	for fpath in all_matching_filepaths:
 		if(os.path.isfile(fpath)): 
