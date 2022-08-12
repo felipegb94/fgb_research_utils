@@ -4,6 +4,7 @@ import glob
 import json
 import re
 import pickle
+import shutil
 
 #### Library imports
 from IPython.core import debugger
@@ -49,7 +50,7 @@ def simple_grep( filepath, str_to_search, n_lines=-1 ):
 			lines_with_str.append(line.split('\n')[0]) # Remove the new line characted if there is any
 	return lines_with_str
 
-def get_dirnames_in_dir(dirpath, str_in_dirname=None):
+def get_dirnames_in_dir(dirpath, str_in_dirname=None, include_full_dirpath=False):
 	'''
 		Output all the dirnames inside of dirpath.
 		If str_in_dirname is given, only return the dirnames containing that string
@@ -61,7 +62,10 @@ def get_dirnames_in_dir(dirpath, str_in_dirname=None):
 	filtered_dirnames = []
 	for curr_dirname in all_dirnames:
 		if(str_in_dirname in curr_dirname):
-			filtered_dirnames.append(curr_dirname)
+			if(include_full_dirpath):
+				filtered_dirnames.append(os.path.join(dirpath, curr_dirname))
+			else:
+				filtered_dirnames.append(curr_dirname)
 	return filtered_dirnames
 
 def get_filepaths_in_dir(dirpath, match_str_pattern=None, only_filenames=False, keep_ext=True):
@@ -81,6 +85,26 @@ def get_filepaths_in_dir(dirpath, match_str_pattern=None, only_filenames=False, 
 			if(only_filenames): filepaths.append(os.path.basename(fpath))
 			else: filepaths.append(fpath)
 	return filepaths
+
+def copy_all_files(src_dirpath, dst_dirpath, ignore_fname_list=[]):
+	'''
+		Copy all the top-level files from src_dirpath to dst_dirpath
+	'''
+	if(not (os.path.exists(src_dirpath))): 
+		print("can't copy all files because src_dirpath does not exist")
+		return 0
+	if(not (os.path.exists(dst_dirpath))): 
+		print("can't copy all files because dst_dirpath does not exist")
+		return 0
+	src_fnames = os.listdir(src_dirpath)
+	src_fnames = os.listdir(src_dirpath)
+	for fname in src_fnames:
+		if(not (fname in ignore_fname_list)):
+			print("copying: {}".format(fname))
+			src_fpath = os.path.join(src_dirpath, fname)
+			dst_fpath = os.path.join(dst_dirpath, fname)
+			if os.path.isfile(src_fpath): shutil.copy2(src_fpath, dst_fpath)
+	return 1
 
 def get_multi_folder_paired_fnames(dirpath_list, valid_file_ext_list):
 	'''
