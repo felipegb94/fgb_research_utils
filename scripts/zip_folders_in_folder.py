@@ -29,6 +29,8 @@ if __name__=='__main__':
     # The folder containing all folders that will be zipped
     base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed'
     base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/SimSPADDataset_nr-64_nc-64_nt-1024_tres-80ps_dark-1_psf-1'
+    base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/SimSPADDataset_nr-64_nc-64_nt-1024_tres-55ps_dark-1_psf-1'
+    base_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/SimSPADDataset_nr-64_nc-64_nt-1024_tres-60ps_dark-1_psf-1'
     # Folder where all the zip files will be stored in
     # out_dirpath = '/home/felipe/repos/spatio-temporal-csph/data_gener/TrainData/processed_zipped'
     out_dirpath = None
